@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Recognition{% endblock %}
+{% block eyebrow %}Face recognition{% endblock %}
+{% block content %}
+<section class="page-section">
+	<div id="recognitionConfig" hidden data-scan-interval="{{ settings['camera_scan_interval_ms'] }}" data-cooldown="{{ settings['recognition_cooldown_seconds'] }}"></div>
+	<div class="section-heading">
+		<div>
+			<span class="eyebrow">Live attendance</span>
+			<h1>Recognition</h1>
+			<p class="muted">The camera is ready when your team is.</p>
+		</div>
+	</div>
+	<div class="recognition-layout">
+		<div class="camera-panel">
+			<span class="camera-badge" id="cameraBadge">● Camera idle</span>
+			<div class="camera-screen">
+				<video id="cameraVideo" autoplay muted playsinline hidden></video>
+				<span id="cameraPlaceholder">Click activate camera to begin</span>
+			</div>
+		</div>
+		<div class="recognition-side">
+			<div class="panel">
+				<div class="attendance-mode-control">
+					<div><span class="eyebrow">Current mode</span><strong id="currentAttendanceMode">CHECK-IN</strong></div>
+					<div class="attendance-mode-buttons" role="group" aria-label="Attendance mode">
+						<button class="mode-toggle active" id="checkInMode" type="button" aria-pressed="true">Check-in Mode</button>
+						<button class="mode-toggle" id="checkOutMode" type="button" aria-pressed="false">Check-out Mode</button>
+					</div>
+				</div>
+				<div class="ready-mark">◎</div>
+				<span class="eyebrow">Recognition status</span>
+				<h2 id="recognitionStatus">Ready for recognition</h2>
+				<p class="muted" id="cameraMessage">Attendance capture starts automatically after camera activation.</p>
+				<p class="muted" id="recognizedEmployee" hidden></p>
+				<button class="primary-button" id="activateCamera" type="button">Activate camera <span>→</span></button>
+				<button class="primary-button" id="captureAttendance" type="button" hidden>Scan next person <span>→</span></button>
+			</div>
+			<div class="panel">
+				<h3>Recognition settings</h3>
+				<p class="muted">Match threshold <strong>{{ settings['face_match_threshold'] }}</strong></p>
+				<p class="muted">Scan interval <strong>{{ settings['camera_scan_interval_ms'] }} ms</strong></p>
+				<p class="muted">Cooldown <strong>{{ settings['recognition_cooldown_seconds'] }} seconds</strong></p>
+				<p class="muted">Camera index <strong>0</strong></p>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

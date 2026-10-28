@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}{{ employee['name'] }}{% endblock %}
+{% block eyebrow %}Employees / Profile{% endblock %}
+{% block content %}
+<section class="page-section">
+	<div class="section-heading">
+		<div>
+			<span class="eyebrow">Employee profile</span>
+			<h1>{{ employee['name'] }}</h1>
+			<p class="muted">{{ employee['employee_id'] }} · {{ employee['department'] or 'No department' }}</p>
+		</div>
+		<div class="form-actions">
+			<form method="post" action="{{ url_for('employees.delete', employee_id=employee['id']) }}">
+				<button class="primary-button" data-confirm="Remove this employee and biometric record?" type="submit">Delete profile</button>
+			</form>
+		</div>
+	</div>
+	<div class="panel employee-profile-card">
+		<a class="profile-edit-button" href="{{ url_for('employees.edit', employee_id=employee['id']) }}" aria-label="Edit employee details" title="Edit details">
+			<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+		</a>
+		<div class="person">
+			<span class="person-avatar" style="height:70px;width:70px;font-size:25px">{{ employee['name'][0] }}</span>
+			<div><h2>{{ employee['name'] }}</h2><p class="muted">{{ employee['designation'] or 'Team member' }}</p></div>
+		</div>
+		<div class="form-grid" style="margin-top:30px">
+			<p><small class="muted">Email</small><br>{{ employee['email'] or '—' }}</p>
+			<p><small class="muted">Phone</small><br>{{ employee['phone'] or '—' }}</p>
+			<p><small class="muted">Joining date</small><br>{{ employee['joining_date'] or '—' }}</p>
+			<p><small class="muted">Face status</small><br><span class="status {{ 'active' if face_registered else 'inactive' }}" id="faceRegistrationStatus">{{ 'Registered' if face_registered else 'Not registered' }}</span></p>
+		</div>
+	</div>
+	<div class="recognition-layout">
+		<div class="camera-panel">
+			<span class="camera-badge" id="enrollmentCameraBadge">● Camera idle</span>
+			<div class="camera-screen">
+				<video id="enrollmentVideo" autoplay muted playsinline hidden></video>
+				<span id="enrollmentPlaceholder">Camera idle</span>
+			</div>
+		</div>
+		<div class="recognition-side">
+			<div class="panel">
+				<span class="eyebrow">Face enrollment</span>
+				<h2 id="enrollmentStatus">{{ 'Face registered' if face_registered else 'Not registered' }}</h2>
+				<p class="muted" id="enrollmentMessage">Position one face in the frame.</p>
+				<button class="primary-button" id="startFaceEnrollment" data-employee-id="{{ employee['employee_id'] }}" type="button">{{ 'Replace face sample' if face_registered else 'Capture face' }} <span>→</span></button>
+				<button class="primary-button" id="cancelFaceEnrollment" type="button" hidden>Cancel</button>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

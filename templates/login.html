@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Sign in | {{ app_name }}</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+	</head>
+	<body class="login-page">
+	<div class="login-visual">
+		<div class="visual-grid"></div>
+		<a class="brand light" href="#">
+			<span class="brand-mark">N</span>
+			<span>{{ app_name }}</span>
+		</a>
+		<div class="visual-copy">
+			<span class="kicker">Intelligence for people operations</span>
+			<h1>See your<br><em>workforce</em><br>clearly.</h1>
+			<p>Secure, human-centered attendance intelligence for teams that move with purpose.</p>
+		</div>
+		<div class="visual-foot">
+			<span>01</span>
+			<span class="line"></span>
+			<span>PRECISION / PRESENCE / TRUST</span>
+		</div>
+	</div>
+	<div class="login-panel">
+		<div class="login-inner">
+			<div class="mobile-brand brand">
+				<span class="brand-mark">N</span>
+				<span>{{ app_name }}</span>
+			</div>
+			<span class="kicker">Welcome back</span>
+			<h2>Sign in to your workspace</h2>
+			<p class="muted">Your team's pulse, at a glance.</p>
+			{% with messages=get_flashed_messages(with_categories=true) %}
+				{% for category,message in messages %}
+					<div class="flash {{ category }}">{{ message }}</div>
+				{% endfor %}
+			{% endwith %}
+			<form method="post" class="login-form">
+				<label>Username or email<input name="username" type="text" autocomplete="username" placeholder="you@company.com" required></label>
+				<label>Password
+					<div class="password-wrap">
+						<input name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+						<button type="button" class="password-toggle">Show</button>
+					</div>
+				</label>
+				<div class="form-row">
+					<label class="check"><input type="checkbox"> <span>Remember me</span></label>
+					<a href="#">Forgot password?</a>
+				</div>
+				<button class="primary-button full" type="submit">Enter workspace <span>→</span></button>
+			</form>
+			<p class="demo-note">Demo access: <strong>admin</strong> / <strong>admin123</strong></p>
+		</div>
+	</div>
+	<script src="{{ url_for('static',filename='js/app.js') }}"></script>
+</body>
+</html>

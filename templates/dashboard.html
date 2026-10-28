@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+{% set current_date = now() %}
+<section class="page-section">
+	<div class="section-heading">
+		<div>
+			<span class="eyebrow">{{ current_date.strftime('%A, %B') }} {{ current_date.day }}, {{ current_date.year }}</span>
+			<h1>Good morning, {{ g.user['username'] }}.</h1>
+			<p class="muted">Here is what is happening across your organization today.</p>
+		</div>
+		<a class="primary-button" href="{{ url_for('dashboard.recognition') }}">Start recognition <span>→</span></a>
+	</div>
+	<div class="kpi-grid analytics-kpi-grid">
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">♧</div></div><strong>{{ stats.total }}</strong><p>Total employees</p></div>
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">✓</div></div><strong>{{ stats.present }}</strong><p>Present today</p></div>
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">!</div></div><strong>{{ stats.absent }}</strong><p>Absent today</p></div>
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">%</div></div><strong>{{ stats.attendance_percentage }}%</strong><p>Attendance today</p></div>
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">↘</div></div><strong>{{ stats.check_ins }}</strong><p>Check-ins today</p></div>
+		<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon">↗</div></div><strong>{{ stats.check_outs }}</strong><p>Check-outs today</p></div>
+	</div>
+	<div class="dashboard-grid analytics-grid">
+		<div class="panel">
+			<div class="panel-header">
+				<div><h3>Attendance overview</h3><p>Present, absent, and attendance rate by day</p></div>
+				<select class="period-select" id="trendPeriod" aria-label="Attendance trend period">
+					<option value="7">Last 7 days</option>
+					<option value="30">Last 30 days</option>
+				</select>
+			</div>
+			<div class="chart-canvas-wrap trend-chart-wrap">
+				<canvas id="attendanceTrendChart" aria-label="Attendance trend for the selected period"></canvas>
+			</div>
+		</div>
+		<div class="panel">
+			<div class="panel-header"><div><h3>By department</h3><p>Today's attendance count</p></div></div>
+			<div class="chart-canvas-wrap department-chart-wrap">
+				<canvas id="departmentAttendanceChart" aria-label="Present and absent employees by department"></canvas>
+			</div>
+			<div class="analytics-detail-table">
+				<table class="data-table">
+					<thead><tr><th>Department</th><th>Total</th><th>Present</th><th>Absent</th><th>Rate</th></tr></thead>
+					<tbody>
+						{% for item in departments %}
+							<tr><td>{{ item['department'] }}</td><td>{{ item['total'] }}</td><td>{{ item['present'] }}</td><td>{{ item['absent'] }}</td><td>{{ item['percentage'] }}%</td></tr>
+						{% else %}
+							<tr><td colspan="5" class="muted">No active departments yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="panel table-panel">
+		<div class="panel-header">
+			<div><h3>Recent attendance</h3><p>Latest check-ins from your team</p></div>
+			<a href="{{ url_for('dashboard.attendance') }}" class="eyebrow">View all →</a>
+		</div>
+		<table class="data-table">
+			<thead><tr><th>Employee</th><th>Department</th><th>Check in</th><th>Status</th></tr></thead>
+			<tbody>
+				{% for row in recent %}
+					<tr>
+						<td><div class="person"><span class="person-avatar">{{ row['name'][0] }}</span><div>{{ row['name'] }}<small>{{ row['code'] }}</small></div></div></td>
+						<td>{{ row['department'] or 'Unassigned' }}</td>
+						<td>{{ row['check_in'][11:16] if row['check_in'] else '—' }}</td>
+						<td><span class="status {{ row['status']|lower }}">{{ row['status'] }}</span></td>
+					</tr>
+				{% else %}
+					<tr><td colspan="4" class="muted">No attendance records yet.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+<script id="dashboardAnalytics" type="application/json">{{ {'trend_7': trend_7, 'trend_30': trend_30, 'departments': departments}|tojson }}</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+{% endblock %}

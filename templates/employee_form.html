@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% set editing = employee is defined and employee %}
+{% block title %}{{ 'Edit employee' if editing else 'Add employee' }}{% endblock %}
+{% block eyebrow %}Employees / {{ 'Edit' if editing else 'Add' }}{% endblock %}
+{% block content %}
+<section class="page-section">
+	<div class="section-heading">
+		<div>
+			<span class="eyebrow">People directory</span>
+			<h1>{{ 'Edit employee' if editing else 'Add employee' }}</h1>
+			<p class="muted">{{ 'Update this employee profile.' if editing else 'Create the employee profile before capturing a face sample.' }}</p>
+		</div>
+	</div>
+	<div class="panel form-card">
+		<form method="post">
+			<div class="form-grid">
+				<div class="field"><label>Employee ID<input name="employee_id" value="{{ employee['employee_id'] if editing else '' }}" placeholder="EMP-001" required></label></div>
+				<div class="field"><label>Full name<input name="name" value="{{ employee['name'] if editing else '' }}" placeholder="Full name" required></label></div>
+				<div class="field"><label>Email<input name="email" type="email" value="{{ employee['email'] if editing else '' }}" placeholder="name@company.com"></label></div>
+				<div class="field"><label>Phone<input name="phone" value="{{ employee['phone'] if editing else '' }}" placeholder="+1 555 000 0000"></label></div>
+				<div class="field"><label>Department<input name="department" value="{{ employee['department'] if editing else '' }}" placeholder="Engineering"></label></div>
+				<div class="field"><label>Designation<input name="designation" value="{{ employee['designation'] if editing else '' }}" placeholder="Product designer"></label></div>
+				<div class="field"><label>Joining date<input name="joining_date" type="date" value="{{ employee['joining_date'] if editing else '' }}"></label></div>
+				{% if editing %}
+				<div class="field"><label>Status<select name="status"><option value="Active" {{ 'selected' if employee['status'] == 'Active' }}>Active</option><option value="Inactive" {{ 'selected' if employee['status'] == 'Inactive' }}>Inactive</option></select></label></div>
+				{% endif %}
+			</div>
+			<div class="form-actions">
+				<button class="primary-button" type="submit">{{ 'Save changes' if editing else 'Create profile' }} <span>→</span></button>
+				{% if editing %}<a href="{{ url_for('employees.detail', employee_id=employee['id']) }}">Cancel</a>{% endif %}
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock %}

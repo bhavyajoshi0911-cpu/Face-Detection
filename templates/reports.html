@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block eyebrow %}Reports{% endblock %}
+{% block content %}
+<section class="page-section">
+	<div class="section-heading">
+		<div>
+			<span class="eyebrow">Attendance records</span>
+			<h1>Reports</h1>
+			<p class="muted">Filter attendance by date, employee, department, or status.</p>
+		</div>
+		<a class="primary-button" href="{{ url_for('dashboard.export_report', date_from=filters['date_from'], date_to=filters['date_to'], employee=filters['employee'], department=filters['department'], status=filters['status']) }}">Export CSV <span>↓</span></a>
+	</div>
+	{% if report_error %}<div class="flash error" role="alert">{{ report_error }}</div>{% endif %}
+	<form class="panel report-filter-panel" method="get" action="{{ url_for('dashboard.reports') }}">
+		<div class="form-grid report-filter-grid">
+			<div class="field"><label for="dateFrom">Date from</label><input id="dateFrom" type="date" name="date_from" value="{{ filters['date_from'] }}" required></div>
+			<div class="field"><label for="dateTo">Date to</label><input id="dateTo" type="date" name="date_to" value="{{ filters['date_to'] }}" required></div>
+			<div class="field">
+				<label for="employeeFilter">Employee</label>
+				<select id="employeeFilter" name="employee">
+					<option value="">All employees</option>
+					{% for employee in employees %}
+						<option value="{{ employee['employee_id'] }}" {% if filters['employee'] == employee['employee_id'] %}selected{% endif %}>{{ employee['name'] }} · {{ employee['employee_id'] }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="field">
+				<label for="departmentFilter">Department</label>
+				<select id="departmentFilter" name="department">
+					<option value="">All departments</option>
+					{% for item in departments %}
+						<option value="{{ item['department'] }}" {% if filters['department'] == item['department'] %}selected{% endif %}>{{ item['department'] }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="field">
+				<label for="statusFilter">Status</label>
+				<select id="statusFilter" name="status">
+					<option value="">All statuses</option>
+					{% for status in ['Present', 'Absent', 'Late'] %}
+						<option value="{{ status }}" {% if filters['status'] == status %}selected{% endif %}>{{ status }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<div class="form-actions"><button class="primary-button" type="submit">Generate Report <span>→</span></button></div>
+	</form>
+	<div class="kpi-grid report-summary">
+		<div class="kpi-card"><strong>{{ summary['total_records'] }}</strong><p>Total records</p></div>
+		<div class="kpi-card"><strong>{{ summary['present'] }}</strong><p>Present</p></div>
+		<div class="kpi-card"><strong>{{ summary['absent'] }}</strong><p>Absent</p></div>
+		<div class="kpi-card"><strong>{{ summary['average_working_hours'] }} h</strong><p>Average working hours</p></div>
+		<div class="kpi-card"><strong>{{ summary['attendance_percentage'] }}%</strong><p>Attendance percentage</p></div>
+	</div>
+	<div class="panel table-panel">
+		<table class="data-table">
+			<thead><tr><th>Employee ID</th><th>Employee</th><th>Department</th><th>Date</th><th>Check-in</th><th>Check-out</th><th>Working hours</th><th>Status</th></tr></thead>
+			<tbody>
+				{% for row in records %}
+					<tr>
+						<td>{{ row['code'] }}</td>
+						<td>{{ row['name'] }}</td>
+						<td>{{ row['department'] }}</td>
+						<td>{{ row['date'] }}</td>
+						<td>{{ row['check_in'][11:16] if row['check_in'] else '—' }}</td>
+						<td>{{ row['check_out'][11:16] if row['check_out'] else '—' }}</td>
+						<td>{{ row['working_hours'] ~ ' h' if row['working_hours'] is not none else '—' }}</td>
+						<td><span class="status {{ row['status']|lower }}">{{ row['status'] }}</span></td>
+					</tr>
+				{% else %}
+					<tr><td colspan="8" class="muted">No records match these filters.</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
+{% endblock %}

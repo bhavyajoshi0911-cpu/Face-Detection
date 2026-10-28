@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Attendance{% endblock %}
+{% block eyebrow %}Attendance{% endblock %}
+{% block content %}
+<section class="page-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Daily records</span>
+            <h1>Attendance</h1>
+            <p class="muted">A clear record of every check-in and check-out.</p>
+        </div>
+        <a class="primary-button" href="{{ url_for('dashboard.export_attendance') }}">Export report <span>↓</span></a>
+    </div>
+    <div class="panel table-panel">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Date</th>
+                    <th>Check in</th>
+                    <th>Check out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in records %}
+                <tr>
+                    <td>
+                        <div class="person">
+                            <span class="person-avatar">{{ row['name'][0] }}</span>
+                            <div>{{ row['name'] }}<small>{{ row['code'] }}</small></div>
+                        </div>
+                    </td>
+                    <td>{{ row['date'] }}</td>
+                    <td>{{ row['check_in'][11:16] if row['check_in'] else '—' }}</td>
+                    <td>{{ row['check_out'][11:16] if row['check_out'] else '—' }}</td>
+                    <td><span class="status {{ row['status']|lower }}">{{ row['status'] }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="muted">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

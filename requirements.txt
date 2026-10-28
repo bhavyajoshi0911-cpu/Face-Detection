@@ -1,0 +1,8 @@
+Flask>=3.1,<4
+python-dotenv>=1.0
+Werkzeug>=3.1,<4
+numpy>=2.0
+opencv-python>=4.10
+# Optional native dependency for real encodings. Install when supported by your platform:
+# face-recognition>=1.3
+pytest>=8.0
